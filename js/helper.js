@@ -15,43 +15,46 @@ replace the %data% placeholder text you see in them.
 var HTMLheaderName = '<h1 id="name">%data%</h1>';
 var HTMLheaderRole = '<span>%data%</span><hr/>';
 
-var HTMLcontactGeneric = '<li class="flex-item"><span class="orange-text">%contact%</span><span class="white-text">%data%</span></li>';
-var HTMLmobile = '<li class="flex-item"><span class="orange-text">mobile</span><span class="white-text">%data%</span></li>';
-var HTMLemail = '<li class="flex-item"><span class="orange-text">email</span><span class="white-text">%data%</span></li>';
-var HTMLtwitter = '<li class="flex-item"><span class="orange-text">twitter</span><span class="white-text">%data%</span></li>';
-var HTMLgithub = '<li class="flex-item"><span class="orange-text">github</span><span class="white-text">%data%</span></li>';
-var HTMLblog = '<li class="flex-item"><span class="orange-text">blog</span><span class="white-text">%data%</span></li>';
-var HTMLlocation = '<li class="flex-item"><span class="orange-text">location</span><span class="white-text">%data%</span></li>';
+var HTMLcontactGeneric = '<li class="flex-item"><span class="red-text">%contact%</span><span class="yellow-text">%data%</span></li>';
+var HTMLmobile = '<li class="flex-item"><span class="red-text">mobile</span><span class="yellow-text">%data%</span></li>';
+var HTMLemail = '<li class="flex-item"><span class="red-text">email</span><span class="yellow-text">%data%</span></li>';
+var HTMLtwitter = '<li class="flex-item"><span class="red-text">twitter</span><span class="yellow-text">%data%</span></li>';
+var HTMLgithub = '<li class="flex-item"><span class="red-text">github</span><span class="yellow-text">%data%</span></li>';
+var HTMLblog = '<li class="flex-item"><span class="red-text">blog</span><span class="yellow-text">%data%</span></li>';
+var HTMLlocation = '<li class="flex-item"><span class="red-text">location</span><span class="yellow-text">%data%</span></li>';
 
 var HTMLbioPic = '<img src="%data%" class="biopic">';
 var HTMLwelcomeMsg = '<span class="welcome-message">%data%</span>';
 
 var HTMLskillsStart = '<h3 id="skillsH3">Skills at a Glance:</h3><ul id="skills" class="flex-box"></ul>';
-var HTMLskills = '<li class="flex-item"><span class="white-text">%data%</span></li>';
+var HTMLskills = '<li class="flex-item"><span class="yellow-text">%data%</span></li>';
 
 var HTMLworkStart = '<div class="work-entry"></div>';
-var HTMLworkEmployer = '<a href="#">%data%';
-var HTMLworkTitle = ' - %data%</a>';
+var HTMLworkEmployer = '<div class="green-text">%data%';
+var HTMLworkTitle = ' - %data%</div>';
 var HTMLworkDates = '<div class="date-text">%data%</div>';
 var HTMLworkLocation = '<div class="location-text">%data%</div>';
 var HTMLworkDescription = '<p><br>%data%</p>';
+var HTMLworkLocation = '<div class="location-text">%data%</div>';
 
 var HTMLprojectStart = '<div class="project-entry"></div>';
-var HTMLprojectTitle = '<a href="#">%data%</a>';
+var HTMLprojectTitle = '<div class="green-text">%data%</div>';
 var HTMLprojectDates = '<div class="date-text">%data%</div>';
 var HTMLprojectDescription = '<p><br>%data%</p>';
-var HTMLprojectImage = '<img src="%data%">';
+var HTMLprojectImage = '<img class="img-responsive" src="%data%">';
 
 var HTMLschoolStart = '<div class="education-entry"></div>';
-var HTMLschoolName = '<a href="#">%data%';
-var HTMLschoolDegree = ' -- %data%</a>';
+var HTMLschoolName = '<div class="green-text">%data%';
+var HTMLschoolDegree = ' -- %data%</div>';
 var HTMLschoolDates = '<div class="date-text">%data%</div>';
 var HTMLschoolLocation = '<div class="location-text">%data%</div>';
 var HTMLschoolMajor = '<em><br>Major: %data%</em>';
+var HTMLschoolMinors = '<em><br>Minor(s): %data%</em>';
+var HTMLschoolURL = '<br><a href="#">%data%</a>';
 
 var HTMLonlineClasses = '<h3>Online Classes</h3>';
-var HTMLonlineTitle = '<a href="#">%data%';
-var HTMLonlineSchool = ' - %data%</a>';
+var HTMLonlineTitle = '<div class="green-text">%data%';
+var HTMLonlineSchool = ' - %data%</div>';
 var HTMLonlineDates = '<div class="date-text">%data%</div>';
 var HTMLonlineURL = '<br><a href="#">%data%</a>';
 
@@ -85,9 +88,11 @@ function logClicks(x,y) {
 }
 
 $(document).click(function(loc) {
-  // your code goes here!
-});
+    var x = loc.pageX;
+    var y = loc.pageY;
 
+    logClicks(x,y);
+});
 
 
 /*
@@ -146,6 +151,8 @@ function initializeMap() {
   placeData is the object returned from search results containing information
   about a single location.
   */
+  var infoWindow = new google.maps.InfoWindow();
+
   function createMapMarker(placeData) {
 
     // The next lines save location data from the search result object to local variables
@@ -164,13 +171,13 @@ function initializeMap() {
     // infoWindows are the little helper windows that open when you click
     // or hover over a pin on a map. They usually contain more information
     // about a location.
-    var infoWindow = new google.maps.InfoWindow({
-      content: name
-    });
+   
 
     // hmmmm, I wonder what this is about...
     google.maps.event.addListener(marker, 'click', function() {
-      // your code goes here!
+      if (infoWindow) infoWindow.close();
+      infoWindow = new google.maps.InfoWindow({content: name});
+      infoWindow.open(map, marker);
     });
 
     // this is where the pin actually gets added to the map.
@@ -206,6 +213,9 @@ function initializeMap() {
     for (var place in locations) {
 
       // the search request object
+      if (!locations[place])
+        continue;
+
       var request = {
         query: locations[place]
       };
@@ -233,11 +243,13 @@ Uncomment the code below when you're ready to implement a Google Map!
 */
 
 // Calls the initializeMap() function when the page loads
-//window.addEventListener('load', initializeMap);
+window.addEventListener('load', initializeMap);
 
 // Vanilla JS way to listen for resizing of the window
 // and adjust map bounds
-//window.addEventListener('resize', function(e) {
+window.addEventListener('resize', function(e) {
   // Make sure the map bounds get updated on page resize
-//  map.fitBounds(mapBounds);
-//});
+ map.fitBounds(mapBounds);
+});
+
+
